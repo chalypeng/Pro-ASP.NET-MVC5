@@ -174,7 +174,7 @@ namespace LanguageFeatures.Controllers
             int count = 0;
             StringBuilder result = new StringBuilder();
             foreach (var p in foundProducts) {
-                result.AppendFormat("Product Name:{1} Price: {0} ",p.Price,p.Name);
+                result.AppendFormat("Product Name:{1} Price: {0}",p.Price,p.Name);
                 //if (++count == 3) {
                 //    break;
                 //}
