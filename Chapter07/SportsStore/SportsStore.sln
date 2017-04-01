@@ -6,8 +6,15 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportsStore.Domain", "SportsStore.Domain\SportsStore.Domain.csproj", "{6077E054-48F8-40E8-B23E-34FC71F63F54}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportsStore.WebUI", "SportsStore.WebUI\SportsStore.WebUI.csproj", "{9A1F0D0E-95B0-4400-BBEE-CFE58D7C9CEB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6077E054-48F8-40E8-B23E-34FC71F63F54} = {6077E054-48F8-40E8-B23E-34FC71F63F54}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SportsStore.UnitTests", "SportsStore.UnitTests\SportsStore.UnitTests.csproj", "{7CDA4A39-2B94-4D47-BE06-A2B3401C7D72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9A1F0D0E-95B0-4400-BBEE-CFE58D7C9CEB} = {9A1F0D0E-95B0-4400-BBEE-CFE58D7C9CEB}
+		{6077E054-48F8-40E8-B23E-34FC71F63F54} = {6077E054-48F8-40E8-B23E-34FC71F63F54}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
