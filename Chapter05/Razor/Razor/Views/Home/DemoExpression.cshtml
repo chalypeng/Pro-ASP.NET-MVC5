@@ -2,17 +2,33 @@
 
 @{
     ViewBag.Title = "DemoExpression";
-    Layout = "~/Views/_BasicLayout.cshtml";
+    //Layout = "~/Views/_BasicLayout.cshtml";
 }
 
 <table>
     <thead>
-    <tr><th>Property</th><th>Value</th></tr>
+        <tr><th>Property</th><th>Value</th></tr>
     </thead>
     <tbody>
-    <tr><td>Name</td><td>@Model.Name</td></tr>
-    <tr><td>Price</td><td>@Model.Price</td></tr>
-    <tr><td>Stock Level</td><td>@ViewBag.ProductCount</td></tr>
+        <tr><td>Name</td><td>@Model.Name</td></tr>
+        <tr><td>Price</td><td>@Model.Price</td></tr>
+        <tr>
+            <td>Stock Level</td>
+            <td>
+                @if (ViewBag.Production == 0)
+                {
+                    @:Out of Stock
+                }
+                else if (ViewBag.ProductCount == 1)
+                {
+                    <b>Low Stock (@ViewBag.ProductCount)</b>
+                }
+                else
+                {
+                    @ViewBag.ProductCount
+                }
+            </td>
+        </tr>
     </tbody>
 </table>
 
@@ -20,7 +36,7 @@
     The containing element has data attrivutes
 </div>
 
-Discount:<input type="checkbox" checked="@ViewBag.ApplyDiscount"/>
+Discount:<input type="checkbox" checked="@ViewBag.ApplyDiscount" />
 Express:<input type="checkbox" checked="@ViewBag.ExpressShip" />
 Supplier:<input type="checkbox" checked="@ViewBag.Supplier" />
 
