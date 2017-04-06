@@ -29,7 +29,7 @@ namespace SportsStore.UnitTests {
             controller.PageSize = 3;
 
             // act
-            ProductsListViewModel result = (ProductsListViewModel) controller.List(2).Model;
+            ProductsListViewModel result = (ProductsListViewModel) controller.List(null,2).Model;
             // Assert
             Product[] prodArray = result.Products.ToArray();
             Assert.IsTrue(prodArray.Length == 2);
@@ -60,5 +60,83 @@ namespace SportsStore.UnitTests {
             result.ToString());
         }
 
-}
+        [TestMethod]
+        public void Can_Create_Categories() {
+            // 准备 创建模仿存储库
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m=>m.Products).Returns(new Product[] {
+                new Product{ProductID = 1,Name = "P1",Category = "Apples"},
+                new Product{ProductID = 2,Name = "P2",Category = "Apples"},
+                new Product{ProductID = 3,Name = "P3",Category = "Plums"},
+                new Product{ProductID = 4,Name = "P4",Category = "Oranges"},
+            });
+
+            // 准备-创建控制器
+            NavController target = new NavController(mock.Object);
+
+            //动作--获取分类集合
+            string[] results = ((IEnumerable<string>) target.Menu().Model).ToArray();
+
+            // 断言
+            Assert.AreEqual(results.Length,3);
+            Assert.AreEqual(results[0],"Apples");
+            Assert.AreEqual(results[1],"Oranges");
+            Assert.AreEqual(results[2], "Plums");
+        }
+
+        [TestMethod]
+        public void Indicates_Seceted_Category()
+        {
+            // 准备 创建模仿存储库
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product{ProductID = 1,Name = "P1",Category = "Apples"},
+                new Product{ProductID = 4,Name = "P4",Category = "Oranges"},
+            });
+
+            // 准备-创建控制器
+            NavController target = new NavController(mock.Object);
+
+            // 准备已选分类
+            string categoryToSecelt = "Apples";
+            
+            //动作--获取分类集合
+            string results = target.Menu(categoryToSecelt).ViewBag.SelectedCategory;
+
+            // 断言
+            Assert.AreEqual(categoryToSecelt, results);
+        }
+        /// <summary>
+        ///  单元测试：特定分类的产品数
+        /// </summary>
+        [TestMethod]
+        public void Generate_Category_Spectific_Product_Count()
+        {
+            // 准备 创建模仿存储库
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product{ProductID = 1,Name = "P1",Category = "Cat1"},
+                new Product{ProductID = 2,Name = "P2",Category = "Cat2"},
+                new Product{ProductID = 3,Name = "P3",Category = "Cat1"},
+                new Product{ProductID = 4,Name = "P4",Category = "Cat2"},
+                new Product{ProductID = 5,Name = "P5",Category = "Cat3"},
+            });
+
+            // 准备-创建控制器并使页面容纳3个物品
+            ProductController target = new ProductController(mock.Object);
+            target.PageSize = 3;
+
+            //动作--测试不同分类产品数
+            int res1 = ((ProductsListViewModel) target.List("Cat1").Model).PagingInfo.TotalItems;
+            int res2 = ((ProductsListViewModel)target.List("Cat2").Model).PagingInfo.TotalItems;
+            int res3= ((ProductsListViewModel)target.List("Cat3").Model).PagingInfo.TotalItems;
+            int resAll = ((ProductsListViewModel)target.List(null).Model).PagingInfo.TotalItems;
+            // 断言
+            Assert.AreEqual(res1, 2);
+            Assert.AreEqual(res2, 2);
+            Assert.AreEqual(res3, 1);
+            Assert.AreEqual(resAll, 5);
+        }
+
+    }
 }
