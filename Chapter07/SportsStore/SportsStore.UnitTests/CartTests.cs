@@ -2,6 +2,12 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SportsStore.Domain.Entities;
+using SportsStore.Domain.Abstract;
+using SportsStore.WebUI.Controllers;
+using System.Web.Mvc;
+using SportsStore.WebUI.Models;
+using Moq;
+
 namespace SportsStore.UnitTests
 {
     [TestClass]
@@ -108,6 +114,68 @@ namespace SportsStore.UnitTests
 
             // Assert
             Assert.AreEqual(target.Lines.Count(), 0);
+        }
+
+        [TestMethod]
+        public void Can_Add_TO_Cart()
+        {
+            // 准备一个模仿存储库
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product{ProductID=1,Name="P1",Category="Apples"},
+            }.AsQueryable());
+
+            // 准备-创建Cart
+            Cart cart = new Cart();
+
+            // 准备-创建Cart控制器
+            CartController target = new CartController(mock.Object);
+
+            // 动作--对Cart添加一个产品
+            target.AddToCart(cart,1,null);
+
+            // 断言
+            Assert.AreEqual(cart.Lines.Count(), 1);
+            Assert.AreEqual(cart.Lines.ToArray()[0].Product.ProductID,1);
+        }
+
+        [TestMethod]
+        public void Adding_Product_To_Cart_Goes_To_Cart_Screen()
+        {
+            // 准备一个模仿存储库
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[] {
+                new Product{ProductID=1,Name="P1",Category="Apples"},
+            }.AsQueryable());
+
+            // 准备-创建Cart
+            Cart cart = new Cart();
+
+            // 准备-创建Cart控制器
+            CartController target = new CartController(mock.Object);
+
+            // 动作--对Cart添加一个产品
+            RedirectToRouteResult result =  target.AddToCart(cart, 2, "myUrl");
+
+            // 断言
+            Assert.AreEqual(result.RouteValues["action"], "Index");
+            Assert.AreEqual(result.RouteValues["returnUrl"], "myUrl");
+        }
+        [TestMethod]
+        public void Can_View_Cart_Contents()
+        {
+            // 准备-创建Cart
+            Cart cart = new Cart();
+
+            // 准备-创建Cart控制器
+            CartController target = new CartController(null);
+
+            // 动作--调用Index动作方法
+            CartIndexViewModel result = (CartIndexViewModel)target.Index(cart,"myUrl").ViewData.Model;
+
+            // 断言
+            Assert.AreEqual(result.Cart,cart);
+            Assert.AreEqual(result.ReturnUrl, "myUrl");
         }
     }
 }
